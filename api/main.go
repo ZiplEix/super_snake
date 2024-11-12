@@ -72,7 +72,13 @@ func init() {
 func main() {
 	app := fiber.New()
 
-	app.Use(cors.New(cors.Config{}))
+	app.Use(cors.New(cors.Config{
+		// AllowOrigins: os.Getenv("ALLOWED_ORIGINS"),
+		AllowOrigins:     "http://localhost:5173",
+		AllowCredentials: true,
+		AllowMethods:     "GET,POST,HEAD,PUT,DELETE,PATCH",
+		AllowHeaders:     "Origin, Content-Type, Accept",
+	}))
 
 	app.Use(logger.New(logger.Config{}))
 

@@ -6,5 +6,6 @@ import (
 )
 
 func SetupRoutes(app *fiber.App, hub *websocket.Hub) {
+	authRoutes(app)
 	webSocketRoutes(app, hub)
 }
