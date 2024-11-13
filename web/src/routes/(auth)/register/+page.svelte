@@ -4,21 +4,21 @@
 
     const baseApiUrl = import.meta.env.VITE_API_URL;
 
+    let name = '';
     let email = '';
     let password = '';
     let errorMessage = writable('');
-    let loading = writable(false);
 
-    const login = async (e: Event) => {
+    const register = async (e: Event) => {
         e.preventDefault();
 
-        errorMessage.set('');
-        loading.set(true);
-
         try {
+            errorMessage.set('');
+
             const response = await axios.post(
-                `${baseApiUrl}/login`,
+                `${baseApiUrl}/register`,
                 {
+                    name,
                     email,
                     password,
                 },
@@ -27,25 +27,33 @@
                 }
             )
 
-            if (response.status === 200) {
+            if (response.status === 201) {
+                localStorage.setItem('jwt', response.data.token);
                 window.location.href = '/dashboard';
             } else {
                 errorMessage.set(response.data.message);
             }
         } catch (error: any) {
             errorMessage.set(error.response.data.message);
-        } finally {
-            loading.set(false);
         }
     };
 </script>
 
 <div class="grid h-screen place-items-center">
     <div class="flex flex-col items-center space-y-4">
-        <h1 class="text-5xl font-bold mb-16">Sign In</h1>
+        <h1 class="text-5xl font-bold mb-16">Register</h1>
         <div class="card w-96 bg-base-100 shadow-xl custom-card-bg">
             <div class="card-body">
                 <form class="flex flex-col items-center space-y-4">
+                    <input
+                        type="text"
+                        placeholder="Name"
+                        class="input input-bordered input-primary w-full max-w-xs"
+                        id="name"
+                        name="name"
+                        bind:value={name}
+                        required
+                    />
                     <input
                         type="email"
                         placeholder="Email"
@@ -69,22 +77,14 @@
                             <p>{$errorMessage}</p>
                         </div>
                     {/if}
-                    <button type="submit" class="btn btn-primary h-full" on:click={login}>
-                        {#if $loading}
-                            <div class="mt-4 flex justify-center">
-                                <div class="w-8 h-8 border-t-4 border-blue-300 border-solid rounded-full animate-spin"></div>
-                            </div>
-                        {:else}
-                            Sign In
-                        {/if}
-                    </button>
+                    <button type="submit" class="btn btn-primary" on:click={register}>Register</button>
                 </form>
             </div>
         </div>
         <div class="text-center text-sm mt-4">
-            <a href="/auth/register" class="hover:underline flex">
-                <span>No account yet?&nbsp;</span>
-                <span class="text-blue-500">Sign up</span>
+            <a href="login" class="hover:underline flex">
+                <span>Already have an account?&nbsp;</span>
+                <span class="text-blue-500">Sign in</span>
             </a>
         </div>
     </div>
