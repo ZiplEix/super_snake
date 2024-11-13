@@ -2,7 +2,7 @@
     let gamecode = '';
 </script>
 
-<div class="grid h-screen place-items-center">
+<div class="grid h-96 place-items-center">
     <div class="flex flex-col items-center space-y-4">
         <h1 class="text-5xl font-bold mb-4">Dashboard</h1>
         <button class="btn w-full">CREATE GAME</button>
