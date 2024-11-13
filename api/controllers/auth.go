@@ -65,8 +65,9 @@ func Register(c *fiber.Ctx) error {
 
 	// set the token on the cookies
 	c.Cookie(&fiber.Cookie{
-		Name:  "jwt",
-		Value: token,
+		Name:     "jwt",
+		Value:    token,
+		HTTPOnly: true,
 	})
 	c.Cookie(&fiber.Cookie{
 		Name:  "user",
@@ -80,5 +81,25 @@ func Register(c *fiber.Ctx) error {
 			"name":  user.Name,
 			"id":    user.ID,
 		},
+	})
+}
+
+func Logout(c *fiber.Ctx) error {
+	c.ClearCookie("jwt")
+	c.ClearCookie("user")
+
+	c.Cookie(&fiber.Cookie{
+		Name:   "jwt",
+		Value:  "",
+		MaxAge: -1,
+	})
+	c.Cookie(&fiber.Cookie{
+		Name:   "user",
+		Value:  "",
+		MaxAge: -1,
+	})
+
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"message": "Successfully logged out",
 	})
 }
