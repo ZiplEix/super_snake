@@ -1,15 +1,14 @@
 package websocket
 
-import "github.com/gofiber/websocket/v2"
+// func (g *Game) HandleNewClient(conn *websocket.Conn, gameID string) {
+// 	client := &Client{
+// 		game: g,
+// 		conn: conn,
+// 		send: make(chan []byte, 256),
+// 	}
 
-func (h *Hub) HandleNewClient(conn *websocket.Conn) {
-	client := &Client{
-		hub:  h,
-		conn: conn,
-		send: make(chan []byte, 256),
-	}
-	h.register <- client
+// 	g.Register <- client
 
-	go client.WritePump()
-	client.ReadPump()
-}
+// 	go client.ReadPump()
+// 	client.WritePump()
+// }

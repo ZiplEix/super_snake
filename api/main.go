@@ -6,8 +6,8 @@ import (
 	"os"
 
 	"github.com/ZiplEix/super_snake/api/database"
+	"github.com/ZiplEix/super_snake/api/hub"
 	"github.com/ZiplEix/super_snake/api/routes"
-	"github.com/ZiplEix/super_snake/api/websocket"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/logger"
@@ -82,10 +82,12 @@ func main() {
 
 	app.Use(logger.New(logger.Config{}))
 
-	hub := websocket.NewHub()
-	go hub.Run()
+	// hub := websocket.NewHub()
+	// go hub.Run()
 
-	routes.SetupRoutes(app, hub)
+	hub.MainHub = hub.NewHub()
+
+	routes.SetupRoutes(app)
 
 	log.Fatal(app.Listen(":8080"))
 }

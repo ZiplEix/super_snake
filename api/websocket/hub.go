@@ -1,45 +1,46 @@
 package websocket
 
-import "log"
+// type Hub struct {
+// 	games map[string]*Game
+// 	mu    sync.Mutex
+// }
 
-type Hub struct {
-	clients    map[*Client]bool
-	register   chan *Client
-	unregister chan *Client
-	broadcast  chan []byte
-}
+// func NewHub() *Hub {
+// 	return &Hub{
+// 		games: make(map[string]*Game),
+// 	}
+// }
 
-func NewHub() *Hub {
-	return &Hub{
-		clients:    make(map[*Client]bool),
-		register:   make(chan *Client),
-		unregister: make(chan *Client),
-		broadcast:  make(chan []byte),
-	}
-}
+// func (h *Hub) CreateGame() string {
+// 	h.mu.Lock()
+// 	defer h.mu.Unlock()
 
-func (h *Hub) Run() {
-	for {
-		select {
-		case client := <-h.register:
-			h.clients[client] = true
-			log.Println("Client connected")
-		case client := <-h.unregister:
-			if _, ok := h.clients[client]; ok {
-				delete(h.clients, client)
-				close(client.send)
-				log.Println("Client disconnected")
-			}
-		case message := <-h.broadcast:
-			for client := range h.clients {
-				select {
-				case client.send <- message:
-					log.Println("Message sent (message :'", string(message), "')")
-				default:
-					close(client.send)
-					delete(h.clients, client)
-				}
-			}
-		}
-	}
-}
+// 	gameID := utils.GenerateGameID()
+// 	game := NewGame(gameID)
+// 	h.games[gameID] = game
+
+// 	go game.Run()
+
+// 	log.Printf("Game %s created", gameID)
+// 	return gameID
+// }
+
+// func (h *Hub) GetGame(gameID string) *Game {
+// 	h.mu.Lock()
+// 	defer h.mu.Unlock()
+
+// 	game, exists := h.games[gameID]
+// 	if !exists {
+// 		return nil
+// 	}
+// 	return game
+// }
+
+// func (h *Hub) JoinGame(gameID string, client *Client) bool {
+// 	game, exists := h.games[gameID]
+// 	if !exists || len(game.Players) >= 2 {
+// 		return false
+// 	}
+// 	game.Register <- client
+// 	return true
+// }

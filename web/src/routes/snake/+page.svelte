@@ -38,11 +38,11 @@
     }
 
     // Se connecter au serveur à l'initialisation
-    connectWebSocket();
+    // connectWebSocket();
 </script>
 
 <h1>TEST WEB SOCKET</h1>
 
-<input type="text" bind:value={message} placeholder="Entrez un message" />
+<!-- <input type="text" bind:value={message} placeholder="Entrez un message" />
 
-<button class="btn" on:click={sendMessage}>Envoyer un message</button>
+<button class="btn" on:click={sendMessage}>Envoyer un message</button> -->

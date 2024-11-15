@@ -1,17 +1,34 @@
 <script lang='ts'>
-  import Loader from "$lib/ui/Loader.svelte";
-import { writable } from "svelte/store";
+  import { goto } from "$app/navigation";
+  import { logout } from "$lib";
+    import Loader from "$lib/ui/Loader.svelte";
+    import axios from "axios";
+    import { writable } from "svelte/store";
+
+    const baseApiUrl = import.meta.env.VITE_API_URL;
 
     let gamecode = '';
 
     let createLoading = writable(false);
     let joinLoading = writable(false);
 
-    function createGame() {
+    async function createGame() {
         createLoading.set(true);
-        setTimeout(() => {
-            createLoading.set(false);
-        }, 2000);
+
+        try {
+            const response = await axios.get(`${baseApiUrl}/game/create`, {withCredentials: true});
+
+            goto(`/snake/${response.data.gameID}`);
+        } catch (error: any) {
+            console.error(error);
+            if (error.response.status === 401) {
+                logout();
+            } else {
+                alert('An error occurred while creating the game');
+            }
+        }
+
+        createLoading.set(false);
     }
 
     function joinGame() {

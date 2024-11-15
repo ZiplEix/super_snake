@@ -3,14 +3,14 @@ package websocket
 import "github.com/gofiber/websocket/v2"
 
 type Client struct {
-	hub  *Hub
+	game *Game
 	conn *websocket.Conn
 	send chan []byte
 }
 
 func (c *Client) ReadPump() {
 	defer func() {
-		c.hub.unregister <- c
+		c.game.Unregister <- c
 		_ = c.conn.Close()
 	}()
 
@@ -19,7 +19,7 @@ func (c *Client) ReadPump() {
 		if err != nil {
 			break
 		}
-		c.hub.broadcast <- message
+		c.game.Broadcast <- message
 	}
 }
 
