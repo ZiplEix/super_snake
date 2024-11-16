@@ -33,9 +33,10 @@
 
     function joinGame() {
         joinLoading.set(true);
-        setTimeout(() => {
-            joinLoading.set(false);
-        }, 2000);
+
+        goto(`/snake/${gamecode}`);
+
+        joinLoading.set(false);
     }
 </script>
 

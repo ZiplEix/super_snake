@@ -2,7 +2,6 @@
     // get the gameID from the URL
     import { page } from '$app/stores';
     import { onDestroy, onMount } from 'svelte';
-    import { writable } from 'svelte/store';
 
     const baseApiUrl = import.meta.env.VITE_WS_URL;
 
