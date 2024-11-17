@@ -8,6 +8,16 @@ import (
 	"github.com/gofiber/websocket/v2"
 )
 
+type Params struct {
+	GameLeaderID uint
+}
+
+func NewParams(gameLeaderID uint) Params {
+	return Params{
+		GameLeaderID: gameLeaderID,
+	}
+}
+
 type Game struct {
 	ID         string
 	Players    map[*Client]bool
@@ -15,15 +25,19 @@ type Game struct {
 	Unregister chan *Client
 	Broadcast  chan []byte
 	mu         sync.Mutex
+
+	Params
 }
 
-func NewGame(id string) *Game {
+func NewGame(id string, gameLeaderID uint) *Game {
 	return &Game{
 		ID:         id,
 		Players:    make(map[*Client]bool),
 		Register:   make(chan *Client),
 		Unregister: make(chan *Client),
 		Broadcast:  make(chan []byte),
+
+		Params: NewParams(gameLeaderID),
 	}
 }
 

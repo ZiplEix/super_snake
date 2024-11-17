@@ -23,12 +23,12 @@ func NewHub() *Hub {
 	}
 }
 
-func (h *Hub) CreateGame() string {
+func (h *Hub) CreateGame(gameCreatorID uint) string {
 	h.mu.Lock()
 	defer h.mu.Unlock()
 
 	gameID := utils.GenerateGameID()
-	game := internal_websocket.NewGame(gameID)
+	game := internal_websocket.NewGame(gameID, gameCreatorID)
 	h.games[gameID] = game
 
 	go game.Run()

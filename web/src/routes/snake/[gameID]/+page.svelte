@@ -3,16 +3,35 @@
     import { page } from '$app/stores';
     import { onDestroy, onMount } from 'svelte';
     import { closeSocket, gameID, joinGame, socket, message } from '../../../stores/websocket';
+  import axios from 'axios';
 
-    const baseApiUrl = import.meta.env.VITE_WS_URL;
+    const baseWsUrl = import.meta.env.VITE_WS_URL;
+    const baseApiUrl = import.meta.env.VITE_API_URL;
 
     let currentMessage = '';
     let currentGameID = '';
 
-    onMount(() => {
+    type GameInfos = {
+        id: string;
+        gameLeaderID: number;
+    };
+
+    let gameInfos: GameInfos = {
+        id: '',
+        gameLeaderID: 0,
+    };
+
+    onMount(async () => {
         currentGameID = $page.params.gameID;
         gameID.set(currentGameID);
-        joinGame(currentGameID, baseApiUrl);
+        joinGame(currentGameID, baseWsUrl);
+
+        try {
+            const response = await axios.get(`${baseApiUrl}/game/${currentGameID}/infos`, {withCredentials: true});
+            gameInfos = response.data;
+        } catch (error) {
+            console.error(error);
+        }
     });
 
     onDestroy(() => {
@@ -31,6 +50,8 @@
 <h1>TEST WEB SOCKET</h1>
 
 <p>gameID : {currentGameID}</p>
+
+<p>{JSON.stringify(gameInfos)}</p>
 
 <br>
 

@@ -20,4 +20,6 @@ func webSocketRoutes(app *fiber.App) {
 
 	// Route WebSocket pour rejoindre une partie
 	app.Get("/ws/:id", middleware.Protected, websocket.New(controllers.JoinGame))
+
+	app.Get("/game/:id/infos", middleware.Protected, controllers.GetGameInfos)
 }
