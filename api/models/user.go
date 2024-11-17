@@ -8,3 +8,8 @@ type User struct {
 	Name     string `gorm:"not null"`
 	Password string `gorm:"not null"`
 }
+
+type UserResponse struct {
+	Email string `json:"email"`
+	Name  string `json:"name"`
+}

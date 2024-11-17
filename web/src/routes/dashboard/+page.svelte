@@ -1,9 +1,10 @@
 <script lang='ts'>
-  import { goto } from "$app/navigation";
-  import { logout } from "$lib";
+    import { goto } from "$app/navigation";
+    import { logout } from "$lib";
     import Loader from "$lib/ui/Loader.svelte";
     import axios from "axios";
     import { writable } from "svelte/store";
+    import { userStore } from "../../stores/user_store";
 
     const baseApiUrl = import.meta.env.VITE_API_URL;
 
@@ -11,6 +12,7 @@
 
     let createLoading = writable(false);
     let joinLoading = writable(false);
+    const user = userStore;
 
     async function createGame() {
         createLoading.set(true);
@@ -43,6 +45,8 @@
 <div class="grid h-96 place-items-center">
     <div class="flex flex-col items-center space-y-4">
         <h1 class="text-5xl font-bold mb-4">Dashboard</h1>
+        <h2 class="text-3xl">Welcome {$user?.name}</h2>
+
         <button class="btn w-full" on:click={createGame}>
             {#if $createLoading}
                 <Loader />

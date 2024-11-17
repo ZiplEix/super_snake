@@ -7,6 +7,14 @@ declare global {
 		// interface PageData {}
 		// interface PageState {}
 		// interface Platform {}
+		interface User {
+			email: string;
+			name: string;
+		}
+
+		interface Session {
+			user?: User;
+		}
 	}
 }
 

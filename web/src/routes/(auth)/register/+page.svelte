@@ -1,6 +1,7 @@
 <script lang='ts'>
     import axios from "axios";
     import { writable } from "svelte/store";
+    import { userStore } from "../../../stores/user_store";
 
     const baseApiUrl = import.meta.env.VITE_API_URL;
 
@@ -28,7 +29,8 @@
             )
 
             if (response.status === 201) {
-                localStorage.setItem('jwt', response.data.token);
+                // localStorage.setItem('jwt', response.data.token);
+                userStore.set(response.data.user);
                 window.location.href = '/dashboard';
             } else {
                 errorMessage.set(response.data.message);

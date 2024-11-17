@@ -1,21 +1,20 @@
-<script context="module" lang='ts'>
-    export async function load({ url }: { url: URL }) {
-        return {
-            queryParam: url.searchParams.get('redirectTo') || '/'
-        }
-    }
-</script>
-
 <script lang='ts'>
-  import NavBar from "$lib/ui/NavBar.svelte";
+    import NavBar from "$lib/ui/NavBar.svelte";
 
     import { onMount } from "svelte";
+    import { userStore } from "../../stores/user_store";
+    import { verifyToken } from "$lib/verify_token";
+    import { redirect } from "@sveltejs/kit";
+    import { goto } from "$app/navigation";
 
-    onMount(() => {
-        const jwt = localStorage.getItem('jwt');
+    onMount(async () => {
+        const user = await verifyToken();
 
-        if (!jwt) {
-            window.location.href = 'login';
+        if (!user) {
+            userStore.set(null);
+            goto('/login');
+        } else {
+            userStore.set(user);
         }
     });
 </script>

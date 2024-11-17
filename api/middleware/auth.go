@@ -39,14 +39,14 @@ func Protected(c *fiber.Ctx) error {
 			})
 		}
 
-		// userIDFloat, ok := claims["user_id"].(float64)
-		// if !ok {
-		// 	return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
-		// 		"error": "Unauthorized, invalid user ID",
-		// 	})
-		// }
-		// userID := uint(userIDFloat)
-		// c.Locals("userId", userID)
+		userIDFloat, ok := claims["user_id"].(float64)
+		if !ok {
+			return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+				"error": "Unauthorized, invalid user ID",
+			})
+		}
+		userID := uint(userIDFloat)
+		c.Locals("userId", userID)
 
 		return c.Next()
 	}
