@@ -1,9 +1,8 @@
 <script lang='ts'>
-    // get the gameID from the URL
     import { page } from '$app/stores';
     import { onDestroy, onMount } from 'svelte';
     import { closeSocket, gameID, joinGame, socket, message } from '../../../stores/websocket';
-  import axios from 'axios';
+    import axios from 'axios';
 
     const baseWsUrl = import.meta.env.VITE_WS_URL;
     const baseApiUrl = import.meta.env.VITE_API_URL;
@@ -40,7 +39,7 @@
 
     function sendMessage() {
         if ($socket && $socket.readyState === WebSocket.OPEN) {
-            $socket.send($message);
+            $socket.send(currentMessage);
         } else {
             console.warn("La connexion WebSocket est fermée");
         }
