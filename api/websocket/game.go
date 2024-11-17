@@ -66,13 +66,13 @@ func (g *Game) Run() {
 			g.mu.Lock()
 
 			g.Players[client] = true
-			log.Printf("Client connected to game '%s'", g.ID)
+			log.Printf("Client connected to game '%s'\n", g.ID)
 
 			if inactivityTimer != nil {
 				inactivityTimer.Stop()
 				inactivityTimer = nil
 				inactivityChan = make(<-chan time.Time)
-				log.Printf("Game '%s' has players, inactivity timer stopped", g.ID)
+				log.Printf("Game '%s' has players, inactivity timer stopped\n", g.ID)
 			}
 
 			g.mu.Unlock()
@@ -81,20 +81,20 @@ func (g *Game) Run() {
 			if _, ok := g.Players[client]; ok {
 				delete(g.Players, client)
 				close(client.send)
-				log.Printf("Client disconnected from game '%s'", g.ID)
+				log.Printf("Client disconnected from game '%s'\n", g.ID)
 			}
 
 			if len(g.Players) == 0 && inactivityTimer == nil {
 				inactivityTimer = time.NewTimer(5 * time.Minute)
 				inactivityChan = inactivityTimer.C
-				log.Printf("Game '%s' has no players, inactivity timer started", g.ID)
+				log.Printf("Game '%s' has no players, inactivity timer started\n", g.ID)
 			}
 
 		case message := <-g.Broadcast:
 			for client := range g.Players {
 				select {
 				case client.send <- message:
-					log.Printf("Message sent to player in game %s: %s", g.ID, string(message))
+					log.Printf("Message sent to player in game %s: %s\n", g.ID, string(message))
 				default:
 					close(client.send)
 					delete(g.Players, client)
@@ -123,10 +123,10 @@ func (g *Game) Run() {
 				// send the message "ping" to all players
 				select {
 				case client.send <- []byte("ping"):
-					log.Printf("Message sent to player in game %s: ping", g.ID)
+					log.Printf("Message sent to player in game %s: ping\n", g.ID)
 					continue
 				default:
-					log.Printf("Client disconnected from game '%s'", g.ID)
+					log.Printf("Client disconnected from game '%s'\n", g.ID)
 					close(client.send)
 					delete(g.Players, client)
 				}
@@ -137,7 +137,7 @@ func (g *Game) Run() {
 		case <-inactivityChan:
 			g.mu.Lock()
 			if len(g.Players) == 0 {
-				log.Printf("Game '%s' has been inactive for 5 minutes, closing game", g.ID)
+				log.Printf("Game '%s' has been inactive for 5 minutes, closing game\n", g.ID)
 				g.mu.Unlock()
 				return
 			}
