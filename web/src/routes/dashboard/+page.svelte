@@ -48,7 +48,11 @@
         createLoading.set(true);
 
         try {
-            const response = await axios.get(`${baseApiUrl}/game/create`, {withCredentials: true});
+            const response = await axios.post(
+                `${baseApiUrl}/game/create`,
+                params,
+                {withCredentials: true},
+            );
 
             goto(`/snake/${response.data.gameID}`);
         } catch (error: any) {
@@ -164,7 +168,7 @@
         <div class="modal-action">
             <form method="dialog">
                 <button class="btn btn-outline">Close</button>
-                <button class="btn btn-primary">Create Game</button>
+                <button class="btn btn-primary" on:click={() => createGame($gameParams)}>Create Game</button>
             </form>
         </div>
     </div>

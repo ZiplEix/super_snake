@@ -12,6 +12,12 @@ declare global {
 			name: string;
 		}
 
+		interface GameParamsRequest {
+			nbPlayerMax: number;
+			mapHeight: number;
+			mapWidth: number;
+		}
+
 		interface Session {
 			user?: User;
 		}
