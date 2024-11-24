@@ -25,21 +25,24 @@ func checkEnv() error {
 		return errors.New("env var 'VERSION' is not set")
 	}
 	// database
-	if _, ok := os.LookupEnv("POSTGRES_HOST"); !ok {
-		return errors.New("env var 'POSTGRES_HOST' is not set")
+	if _, ok := os.LookupEnv("POSTGRES_URL"); !ok {
+		return errors.New("env var 'POSTGRES_URL' is not set")
 	}
-	if _, ok := os.LookupEnv("POSTGRES_PORT"); !ok {
-		return errors.New("env var 'POSTGRES_PORT' is not set")
-	}
-	if _, ok := os.LookupEnv("POSTGRES_USER"); !ok {
-		return errors.New("env var 'POSTGRES_USER' is not set")
-	}
-	if _, ok := os.LookupEnv("POSTGRES_PASSWORD"); !ok {
-		return errors.New("env var 'POSTGRES_PASSWORD' is not set")
-	}
-	if _, ok := os.LookupEnv("POSTGRES_DB"); !ok {
-		return errors.New("env var 'POSTGRES_DB' is not set")
-	}
+	// if _, ok := os.LookupEnv("POSTGRES_HOST"); !ok {
+	// 	return errors.New("env var 'POSTGRES_HOST' is not set")
+	// }
+	// if _, ok := os.LookupEnv("POSTGRES_PORT"); !ok {
+	// 	return errors.New("env var 'POSTGRES_PORT' is not set")
+	// }
+	// if _, ok := os.LookupEnv("POSTGRES_USER"); !ok {
+	// 	return errors.New("env var 'POSTGRES_USER' is not set")
+	// }
+	// if _, ok := os.LookupEnv("POSTGRES_PASSWORD"); !ok {
+	// 	return errors.New("env var 'POSTGRES_PASSWORD' is not set")
+	// }
+	// if _, ok := os.LookupEnv("POSTGRES_DB"); !ok {
+	// 	return errors.New("env var 'POSTGRES_DB' is not set")
+	// }
 	// jwt
 	if _, ok := os.LookupEnv("JWT_SECRET"); !ok {
 		return errors.New("env var 'JWT_SECRET' is not set")

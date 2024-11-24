@@ -15,14 +15,16 @@ var Db *gorm.DB
 func Connect() error {
 	fmt.Println("Connecting to database")
 
-	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable TimeZone=%s",
-		os.Getenv("POSTGRES_HOST"),
-		os.Getenv("POSTGRES_USER"),
-		os.Getenv("POSTGRES_PASSWORD"),
-		os.Getenv("POSTGRES_DB"),
-		os.Getenv("POSTGRES_PORT"),
-		"Europe/Paris",
-	)
+	// dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable TimeZone=%s",
+	// 	os.Getenv("POSTGRES_HOST"),
+	// 	os.Getenv("POSTGRES_USER"),
+	// 	os.Getenv("POSTGRES_PASSWORD"),
+	// 	os.Getenv("POSTGRES_DB"),
+	// 	os.Getenv("POSTGRES_PORT"),
+	// 	"Europe/Paris",
+	// )
+
+	dsn := os.Getenv("POSTGRES_URL")
 
 	var err error
 	for i := 0; i < 5; i++ {
