@@ -8,6 +8,7 @@ declare global {
 		// interface PageState {}
 		// interface Platform {}
 		interface User {
+			id: number;
 			email: string;
 			name: string;
 		}

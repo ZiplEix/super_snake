@@ -16,7 +16,7 @@ func webSocketRoutes(app *fiber.App) {
 	})
 
 	// Route pour créer une partie
-	app.Get("/game/create", middleware.Protected, controllers.CreateGame)
+	app.Post("/game/create", middleware.Protected, controllers.CreateGame)
 
 	// Route WebSocket pour rejoindre une partie
 	app.Get("/ws/:id", middleware.Protected, websocket.New(controllers.JoinGame))

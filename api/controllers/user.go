@@ -24,6 +24,7 @@ func Me(c *fiber.Ctx) error {
 	}
 
 	res := models.UserResponse{
+		ID:    user.ID,
 		Email: user.Email,
 		Name:  user.Name,
 	}

@@ -13,31 +13,35 @@ var (
 )
 
 type Hub struct {
-	games map[string]*internal_websocket.Game
+	games map[string]*internal_websocket.GameSession
 	mu    sync.Mutex
 }
 
 func NewHub() *Hub {
 	return &Hub{
-		games: make(map[string]*internal_websocket.Game),
+		games: make(map[string]*internal_websocket.GameSession),
+		mu:    sync.Mutex{},
 	}
 }
 
-func (h *Hub) CreateGame(gameCreatorID uint) string {
+func (h *Hub) CreateGame(gameCreatorID, mapHeight, mapWidth, nbPlayerMax uint) string {
 	h.mu.Lock()
 	defer h.mu.Unlock()
 
 	gameID := utils.GenerateGameID()
-	game := internal_websocket.NewGame(gameID, gameCreatorID)
+
+	params := internal_websocket.NewParams(gameCreatorID, nbPlayerMax, mapHeight, mapWidth)
+
+	game := internal_websocket.NewGameSession(gameID, params)
 	h.games[gameID] = game
 
 	go game.Run()
 
-	log.Printf("Game %s created", gameID)
+	log.Printf("Game %s created, with params: %v", gameID, params)
 	return gameID
 }
 
-func (h *Hub) GetGame(gameID string) *internal_websocket.Game {
+func (h *Hub) GetGame(gameID string) *internal_websocket.GameSession {
 	h.mu.Lock()
 	defer h.mu.Unlock()
 
@@ -48,11 +52,16 @@ func (h *Hub) GetGame(gameID string) *internal_websocket.Game {
 	return game
 }
 
-func (h *Hub) JoinGame(gameID string, client *internal_websocket.Client) bool {
+func (h *Hub) JoinGame(gameID string, client *internal_websocket.Client) error {
 	game, exists := h.games[gameID]
-	if !exists || len(game.Players) >= 2 {
-		return false
+	if !exists {
+		return internal_websocket.ErrGameNotFound
 	}
+
+	if len(game.Players) >= int(game.NbPlayerMax) {
+		return internal_websocket.ErrGameFull
+	}
+
 	game.Register <- client
-	return true
+	return nil
 }

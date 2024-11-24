@@ -1,13 +1,16 @@
 package websocket
 
 import (
+	"encoding/json"
+	"fmt"
 	"log"
 
 	"github.com/gofiber/websocket/v2"
 )
 
 type Client struct {
-	game *Game
+	id   uint
+	game *GameSession
 	conn *websocket.Conn
 	send chan []byte
 }
@@ -27,9 +30,31 @@ func (c *Client) ReadPump() {
 			break
 		}
 
-		log.Printf("Message reçu du client: %s\n", string(message))
+		log.Printf("Message brut reçu du client: %s\n", string(message))
 
-		c.game.Broadcast <- message
+		// c.game.Broadcast <- message
+
+		var evt Event
+		if err := json.Unmarshal(message, &evt); err != nil {
+			log.Printf("Erreur lors du décodage du message JSON: %s\n", err)
+			continue
+		}
+
+		switch evt.Type {
+		case "game_control":
+			fmt.Println("Game control event received")
+			var controlEvt GameControlEvent
+			if err := json.Unmarshal(evt.Data, &controlEvt); err != nil {
+				log.Printf("Erreur lors du décodage de l'événement de contrôle du jeu: %s\n", err)
+				continue
+			}
+			c.game.HandleGameControlEvent(controlEvt)
+			fmt.Println("Game control event handled")
+		default:
+			log.Printf("Type d'événement inconnu: %s\n", evt.Type)
+		}
+
+		fmt.Println("Event received:", evt)
 	}
 }
 

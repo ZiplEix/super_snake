@@ -2,10 +2,9 @@ import { writable } from "svelte/store";
 
 export const socket = writable<WebSocket | null>(null);
 export const gameID = writable<string>("");
-export const message = writable<string>("");
 export const connectionStatus = writable<string>("");
 
-export function joinGame(gameID: string, baseApiUrl: string) {
+export function joinGame(gameID: string, baseApiUrl: string, messageHandler: ((event: MessageEvent) => any) | null) {
     const ws = new WebSocket(`${baseApiUrl}/ws/${gameID}`);
 
     ws.onopen = () => {
@@ -13,9 +12,10 @@ export function joinGame(gameID: string, baseApiUrl: string) {
         console.log("Connexion WebSoket établie");
     };
 
-    ws.onmessage = (event) => {
-        console.log("Message reçu du serveur:", event.data);
-    };
+    // ws.onmessage = (event) => {
+    //     console.log("Message reçu du serveur:", event.data);
+    // };
+    ws.onmessage = messageHandler;
 
     ws.onerror = (error) => {
         console.error("Erreur WebSocket:", error);
