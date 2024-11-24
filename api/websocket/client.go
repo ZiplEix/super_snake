@@ -32,8 +32,6 @@ func (c *Client) ReadPump() {
 
 		log.Printf("Message brut reçu du client: %s\n", string(message))
 
-		// c.game.Broadcast <- message
-
 		var evt Event
 		if err := json.Unmarshal(message, &evt); err != nil {
 			log.Printf("Erreur lors du décodage du message JSON: %s\n", err)
@@ -50,6 +48,15 @@ func (c *Client) ReadPump() {
 			}
 			c.game.HandleGameControlEvent(controlEvt)
 			fmt.Println("Game control event handled")
+		case "player_move":
+			fmt.Println("Player move event received")
+			var moveEvt PlayerMoveEvent
+			if err := json.Unmarshal(evt.Data, &moveEvt); err != nil {
+				log.Printf("Erreur lors du décodage de l'événement de déplacement du joueur: %s\n", err)
+				continue
+			}
+			c.game.HandlePlayerMoveEvent(c, moveEvt)
+			fmt.Println("Player move event handled")
 		default:
 			log.Printf("Type d'événement inconnu: %s\n", evt.Type)
 		}

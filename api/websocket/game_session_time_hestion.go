@@ -11,7 +11,7 @@ type TimeGestion struct {
 
 func NewTimeGestion() *TimeGestion {
 	return &TimeGestion{
-		GameTicker:             time.NewTicker(300 * time.Millisecond),
+		GameTicker:             time.NewTicker(500 * time.Millisecond),
 		InactivityTimer:        time.NewTimer(5 * time.Minute),
 		InactivityChan:         make(<-chan time.Time),
 		PlayerConnectionTicker: time.NewTicker(5 * time.Second),

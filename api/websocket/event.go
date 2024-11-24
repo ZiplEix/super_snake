@@ -14,3 +14,7 @@ func (e Event) Marshal() ([]byte, error) {
 type GameControlEvent struct {
 	Action string `json:"action"`
 }
+
+type PlayerMoveEvent struct {
+	Direction string `json:"direction"`
+}

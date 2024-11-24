@@ -128,6 +128,31 @@ func (gs *GameSession) CloseGameForInactivity() bool {
 	return false
 }
 
+func (gs *GameSession) Update() {
+	// check game state
+	if gs.GameState != Started || len(gs.Players) == 0 {
+		return
+	}
+
+	fmt.Println("Updating game")
+
+	gs.Game.Update()
+	boardData := gs.Game.GetFullBoardStatus()
+
+	emitedEvent := Event{
+		Type: "UpdateBoard",
+		Data: boardData,
+	}
+
+	data, err := emitedEvent.Marshal()
+	if err != nil {
+		log.Printf("Error while marshalling event: %s\n", err)
+		return
+	}
+
+	gs.Broadcast <- data
+}
+
 func (gs *GameSession) Run() {
 	for {
 		select {
@@ -182,4 +207,9 @@ func (gs *GameSession) HandleGameControlEvent(evt GameControlEvent) {
 	fmt.Println("Broadcasting game start event")
 
 	gs.Broadcast <- data
+}
+
+func (gs *GameSession) HandlePlayerMoveEvent(client *Client, evt PlayerMoveEvent) {
+	// gs.Game.MoveSnake(client.id, evt.Direction)
+	gs.Game.ChangeSnakeDirection(client.id, evt.Direction)
 }

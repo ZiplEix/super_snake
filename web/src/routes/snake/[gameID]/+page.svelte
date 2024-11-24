@@ -66,32 +66,75 @@
                     return currentGrid
                 })
                 break;
+            case 'UpdateBoard':
+                console.log('UpdateBoard', message.data);
+
+                // reset all cells to empty
+                grid.update((currentGrid) => {
+                    currentGrid.forEach((row) => {
+                        row.forEach((cell) => {
+                            cell.state = 'empty';
+                            cell.color = undefined;
+                        });
+                    });
+
+                    return currentGrid;
+                });
+
+                // update cells with new data
+                grid.update((currentGrid) => {
+                    message.data.forEach((cellUpdate: any) => {
+                        const { x, y, content } = cellUpdate;
+                        if (content.type === 1) {
+                            currentGrid[y][x].state = 'snake';
+                            currentGrid[y][x].color = content.color;
+                        } else if (content.type === 2) {
+                            currentGrid[y][x].state = 'food';
+                        } else {
+                            currentGrid[y][x].state = 'empty';
+                            currentGrid[y][x].color = undefined;
+                        }
+                    });
+
+                    return currentGrid
+                })
+                break;
             default:
                 console.warn('Unknown message type:', message.type);
         }
     }
 
-    onMount(async () => {
+    onMount(() => {
         currentGameID = $page.params.gameID;
         gameID.set(currentGameID);
         joinGame(currentGameID, baseWsUrl, messageHandler);
 
-        try {
-            const response = await axios.get(`${baseApiUrl}/game/${currentGameID}/infos`, {withCredentials: true});
-            gameInfos.set(response.data);
+        const fetchGameInfo = async () => {
+            try {
+                const response = await axios.get(`${baseApiUrl}/game/${currentGameID}/infos`, {withCredentials: true});
+                gameInfos.set(response.data);
 
-            grid.set(
-                Array.from({ length: $gameInfos.mapHeight }, (_, y) =>
-                    Array.from({ length: $gameInfos.mapWidth }, (_, x) => ({
-                        x,
-                        y,
-                        state: 'empty',
-                    }))
-                )
-            );
-        } catch (error) {
-            console.error(error);
+                grid.set(
+                    Array.from({ length: $gameInfos.mapHeight }, (_, y) =>
+                        Array.from({ length: $gameInfos.mapWidth }, (_, x) => ({
+                            x,
+                            y,
+                            state: 'empty',
+                        }))
+                    )
+                );
+            } catch (error) {
+                console.error(error);
+            }
         }
+
+        fetchGameInfo();
+
+        window.addEventListener('keyup', handleKeyUp);
+
+        return () => {
+            window.removeEventListener('keyup', handleKeyUp);
+        };
     });
 
     onDestroy(() => {
@@ -133,8 +176,29 @@
 
     let cellSize = 30;
 
-    function updateCellState(x: number, y: number, newState: string) {
-        $grid[y][x].state = newState;
+    function handleKeyUp(event: KeyboardEvent) {
+        let direction = '';
+        switch (event.key) {
+            case 'ArrowUp':
+                direction = 'up';
+                break;
+            case 'ArrowDown':
+                direction = 'down';
+                break;
+            case 'ArrowLeft':
+                direction = 'left';
+                break;
+            case 'ArrowRight':
+                direction = 'right';
+                break;
+            default:
+                return;
+        }
+
+        if (direction) {
+            sendMessage({type: 'player_move', data: {direction}});
+            console.log('Direction:', direction);
+        }
     }
 </script>
 
@@ -172,14 +236,6 @@
                         <img src="/default_food.png" alt="Food" class="w-full h-full p-1" />
                     {/if}
                 </div>
-                <!-- <div
-                    class="aspect-square bg-base-300 border border-base-200 cursor-pointer transition-all"
-                    class:bg-success={cell.state === 'snake'}
-                    class:bg-error={cell.state === 'food'}
-                    class:hover={cell.state === 'empty'}
-                    on:click={() => updateCellState(cell.x, cell.y, 'snake')}
-                    style="width: {cellSize}px; height: {cellSize}px;"
-                ></div> -->
             {/each}
         {/each}
     </div>

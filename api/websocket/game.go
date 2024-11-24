@@ -155,10 +155,47 @@ func (g *Game) MoveSnake(playerID uint) {
 	}
 }
 
-func (g *Game) Update() {
-	// for playerID := range g.Snakes {
-	// 	g.MoveSnake(playerID)
-	// }
+func (g *Game) ChangeSnakeDirection(playerId uint, direction string) {
+	// get the snake
+	snake, ok := g.Snakes[playerId]
+	if !ok {
+		fmt.Printf("Snake not found for player %d\n", playerId)
+		return
+	}
+
+	// check if the direction is valid
+	var newDirection Direction
+	switch direction {
+	case "up":
+		newDirection = Up
+	case "down":
+		newDirection = Down
+	case "left":
+		newDirection = Left
+	case "right":
+		newDirection = Right
+	default:
+		fmt.Printf("Invalid direction: %s\n", direction)
+		return
+	}
+
+	// check if the new direction is opposite to the current direction
+	if newDirection.X == -snake.Direction.X && newDirection.Y == -snake.Direction.Y {
+		fmt.Printf("Invalid direction: %s, cannot go in opposite direction\n", direction)
+		return
+	}
+
+	snake.Direction = newDirection
+
+	fmt.Printf("Snake %d direction changed to %s\n", playerId, direction)
+}
+
+func (g *Game) Update() bool {
+	for playerID := range g.Snakes {
+		g.MoveSnake(playerID)
+	}
+
+	return true
 }
 
 func (g *Game) String() string {
@@ -192,7 +229,7 @@ func (g *Game) GetFullBoardStatus() []byte {
 		for i, part := range snake.Body {
 			color := snake.Color
 			if i == 0 {
-				darkenedColor, err := DarkenHexColor(color, 20)
+				darkenedColor, err := DarkenHexColor(color, 30)
 				if err != nil {
 					fmt.Printf("Error while darkening color: %s\n", err)
 				} else {
