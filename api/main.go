@@ -24,25 +24,14 @@ func checkEnv() error {
 	if _, ok := os.LookupEnv("VERSION"); !ok {
 		return errors.New("env var 'VERSION' is not set")
 	}
+	// cors
+	if _, ok := os.LookupEnv("ALLOWED_ORIGINS"); !ok {
+		return errors.New("env var 'ALLOWED_ORIGINS' is not set")
+	}
 	// database
 	if _, ok := os.LookupEnv("POSTGRES_URL"); !ok {
 		return errors.New("env var 'POSTGRES_URL' is not set")
 	}
-	// if _, ok := os.LookupEnv("POSTGRES_HOST"); !ok {
-	// 	return errors.New("env var 'POSTGRES_HOST' is not set")
-	// }
-	// if _, ok := os.LookupEnv("POSTGRES_PORT"); !ok {
-	// 	return errors.New("env var 'POSTGRES_PORT' is not set")
-	// }
-	// if _, ok := os.LookupEnv("POSTGRES_USER"); !ok {
-	// 	return errors.New("env var 'POSTGRES_USER' is not set")
-	// }
-	// if _, ok := os.LookupEnv("POSTGRES_PASSWORD"); !ok {
-	// 	return errors.New("env var 'POSTGRES_PASSWORD' is not set")
-	// }
-	// if _, ok := os.LookupEnv("POSTGRES_DB"); !ok {
-	// 	return errors.New("env var 'POSTGRES_DB' is not set")
-	// }
 	// jwt
 	if _, ok := os.LookupEnv("JWT_SECRET"); !ok {
 		return errors.New("env var 'JWT_SECRET' is not set")
@@ -76,8 +65,7 @@ func main() {
 	app := fiber.New()
 
 	app.Use(cors.New(cors.Config{
-		// AllowOrigins: os.Getenv("ALLOWED_ORIGINS"),
-		AllowOrigins:     "http://localhost:5173",
+		AllowOrigins:     os.Getenv("ALLOWED_ORIGINS"),
 		AllowCredentials: true,
 		AllowMethods:     "GET,POST,HEAD,PUT,DELETE,PATCH",
 		AllowHeaders:     "Origin, Content-Type, Accept",
